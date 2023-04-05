@@ -1,6 +1,7 @@
 package com.example.excel.controller;
 
 
+import com.example.excel.dto.ExcelExamResultDto;
 import com.example.excel.dto.ExcelUserDto;
 import com.example.excel.excel.file.OneSheetExcelFile;
 import com.example.excel.service.ExcelService;
@@ -21,6 +22,15 @@ public class ExcelController {
     public void downloadExcel(HttpServletResponse response) throws IOException {
         List<ExcelUserDto> userDtoList = excelService.getExcelDtos();
         OneSheetExcelFile<ExcelUserDto> excelFile = new OneSheetExcelFile<>(userDtoList, ExcelUserDto.class);
+
+        response.setHeader("Content-disposition", "attachment;filename=filename.xls");
+        excelFile.write(response.getOutputStream());
+    }
+
+    @GetMapping("/excel/exam-result")
+    public void downloadExamResult(HttpServletResponse response) throws IOException {
+        List<ExcelExamResultDto> examResultDtoList = excelService.getExcelExamResultDto();
+        OneSheetExcelFile<ExcelExamResultDto> excelFile = new OneSheetExcelFile<>(examResultDtoList, ExcelExamResultDto.class);
 
         response.setHeader("Content-disposition", "attachment;filename=filename.xls");
         excelFile.write(response.getOutputStream());
