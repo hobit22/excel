@@ -8,6 +8,8 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+var poiVersion = '4.1.2'
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -20,9 +22,17 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.apache.commons:commons-lang3:3.0'
+
+    implementation "org.apache.poi:poi-ooxml:${poiVersion}" // .xlsx
+    implementation "org.apache.poi:poi:${poiVersion}" // .xls
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
