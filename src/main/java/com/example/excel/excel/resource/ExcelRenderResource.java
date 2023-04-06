@@ -13,14 +13,14 @@ public class ExcelRenderResource {
 
     private PreCalculatedCellStyleMap styleMap;
 
-    private Map<String, String> excelHeaderNames;
+    private Map<String, Object> excelHeaderNames;
     private List<String> dataFieldNames;
 
     public CellStyle getCellStyle(String dataFieldName, ExcelRenderLocation excelRenderLocation) {
         return styleMap.get(ExcelCellKey.of(dataFieldName, excelRenderLocation));
     }
 
-    public String getExcelHeaderName(String dataFieldName) {
+    public Object getExcelHeaderName(String dataFieldName) {
         return excelHeaderNames.get(dataFieldName);
     }
 

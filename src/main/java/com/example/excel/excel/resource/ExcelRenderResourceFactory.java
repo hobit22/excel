@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.example.excel.excel.util.SuperClassReflectionUtils.getAllFields;
 import static com.example.excel.excel.util.SuperClassReflectionUtils.getAnnotation;
@@ -20,7 +22,7 @@ public class ExcelRenderResourceFactory {
     public static <T> ExcelRenderResource prepareRenderResource(Class<?> type, Workbook wb,
                                                             DataFormatDecider dataFormatDecider, List<T> data) {
         PreCalculatedCellStyleMap styleMap = new PreCalculatedCellStyleMap(dataFormatDecider);
-        Map<String, String> headerNamesMap = new LinkedHashMap<>();
+        Map<String, Object> headerNamesMap = new LinkedHashMap<>();
         List<String> fieldNames = new ArrayList<>();
 
         ExcelColumnStyle classDefinedHeaderStyle = getHeaderExcelColumnStyle(type);
@@ -47,9 +49,13 @@ public class ExcelRenderResourceFactory {
                         e.printStackTrace();
                     }
 
-                    for (int i = 0; i < size; i++) {
-                        headerNamesMap.put(field.getName() + "." + i, Integer.toString(i + 1));
-                    }
+//                    for (int i = 0; i < size; i++) {
+//                        headerNamesMap.put(field.getName() + "." + i, Integer.toString(i + 1));
+//                    }
+
+                    List<String> intList = IntStream.range(1, size + 1).boxed().map(Object::toString).collect(Collectors.toList());
+
+                    headerNamesMap.put(field.getName(), intList);
                 } else {
                     // Otherwise, add the header name as specified in the @ExcelColumn annotation
                     headerNamesMap.put(field.getName(), annotation.headerName());

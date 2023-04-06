@@ -67,9 +67,20 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
         Row row = sheet.createRow(rowIndex);
         int columnIndex = columnStartIndex;
         for (String dataFieldName : resource.getDataFieldNames()) {
-            Cell cell = row.createCell(columnIndex++);
-            cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.HEADER));
-            cell.setCellValue(resource.getExcelHeaderName(dataFieldName));
+            if (resource.getExcelHeaderName(dataFieldName) instanceof List){
+                List excelHeaderName = (List) resource.getExcelHeaderName(dataFieldName);
+
+                for (Object o : excelHeaderName) {
+                    Cell cell = row.createCell(columnIndex++);
+                    cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.HEADER));
+                    cell.setCellValue((String) o);
+                }
+
+            } else {
+                Cell cell = row.createCell(columnIndex++);
+                cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.HEADER));
+                cell.setCellValue((String) resource.getExcelHeaderName(dataFieldName));
+            }
         }
     }
 
@@ -82,10 +93,8 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
                 field.setAccessible(true);
 
                 Object fieldData = field.get(data);
-                // Check if the field is a List and append its size to the cell value
-                if (fieldData instanceof List) {
-                    List listData = (List<?>) fieldData;
-
+                if (field.getType().equals(List.class)) {
+                    List<?> listData = (List<?>) fieldData;
                     for (Object element : listData) {
                         Cell cell = row.createCell(columnIndex++);
                         cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.BODY));
@@ -98,7 +107,7 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
                 }
 
             } catch (Exception e) {
-//                throw new CustomException(EXCEL_RENDER_FAILED);
+//            throw new CustomException(EXCEL_RENDER_FAILED);
             }
         }
 
