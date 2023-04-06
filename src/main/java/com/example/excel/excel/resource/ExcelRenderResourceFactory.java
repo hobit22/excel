@@ -38,6 +38,9 @@ public final class ExcelRenderResourceFactory {
                         getCellStyle(decideAppliedStyleAnnotation(classDefinedBodyStyle, annotation.bodyStyle())), wb);
                 fieldNames.add(field.getName());
                 headerNamesMap.put(field.getName(), annotation.headerName());
+            } else if (field.getType().equals(List.class)) {
+                String name = field.getName();
+                System.out.println("name = " + name);
             }
         }
 

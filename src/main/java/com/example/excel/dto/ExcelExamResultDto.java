@@ -25,12 +25,13 @@ public class ExcelExamResultDto {
     public String totalScore;
     @ExcelColumn(headerName = "백점환산")
     public String calculatedScore;
-    @ExcelColumn(headerName = "문항 별 정오")    // Todo dto 생성 가변 or List 에 대한 header 생성 가변
+    @ExcelColumn
     public List<RightDto> rightFlagList;
 
     @Data
     @AllArgsConstructor
     public static class RightDto {
+        @ExcelColumn(headerName = "test")
         public Long questionSeqNo;
         public Boolean rightFlag;
     }
