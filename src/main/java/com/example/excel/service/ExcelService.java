@@ -20,14 +20,13 @@ public class ExcelService {
     }
 
     public List<ExcelExamResultDto> getExcelExamResultDto() {
-        ExcelExamResultDto.RightDto rightDto = new ExcelExamResultDto.RightDto(1L, true);
         ExcelExamResultDto excelUserDto1 = ExcelExamResultDto.builder()
                 .lessonName("수업1")
                 .ucode("23-10101")
                 .username("학생A")
                 .totalScore("12/16")
                 .calculatedScore("73")
-                .rightFlagList(Arrays.asList(rightDto))
+                .rightFlagList(Arrays.asList("맞음", "틀림", "부분점수", "미제출"))
                 .build();
 
         return Arrays.asList(excelUserDto1);

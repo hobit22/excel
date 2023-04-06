@@ -53,7 +53,8 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
     public SXSSFExcelFile(List<T> data, Class<T> type, DataFormatDecider dataFormatDecider) {
         validateData(data);
         this.wb = new SXSSFWorkbook();
-        this.resource = ExcelRenderResourceFactory.prepareRenderResource(type, wb, dataFormatDecider);
+        ExcelRenderResource resource = ExcelRenderResourceFactory.prepareRenderResource(type, wb, dataFormatDecider, data);
+        this.resource = resource;
         renderExcel(data);
     }
 
@@ -76,13 +77,26 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
         Row row = sheet.createRow(rowIndex);
         int columnIndex = columnStartIndex;
         for (String dataFieldName : resource.getDataFieldNames()) {
-            Cell cell = row.createCell(columnIndex++);
             try {
                 Field field = getField(data.getClass(), (dataFieldName));
                 field.setAccessible(true);
-                cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.BODY));
-                Object cellValue = field.get(data);
-                renderCellValue(cell, cellValue);
+
+                Object fieldData = field.get(data);
+                // Check if the field is a List and append its size to the cell value
+                if (fieldData instanceof List) {
+                    List listData = (List<?>) fieldData;
+
+                    for (Object element : listData) {
+                        Cell cell = row.createCell(columnIndex++);
+                        cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.BODY));
+                        renderCellValue(cell, element);
+                    }
+                } else {
+                    Cell cell = row.createCell(columnIndex++);
+                    cell.setCellStyle(resource.getCellStyle(dataFieldName, ExcelRenderLocation.BODY));
+                    renderCellValue(cell, fieldData);
+                }
+
             } catch (Exception e) {
 //                throw new CustomException(EXCEL_RENDER_FAILED);
             }

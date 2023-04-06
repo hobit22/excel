@@ -25,14 +25,6 @@ public class ExcelExamResultDto {
     public String totalScore;
     @ExcelColumn(headerName = "백점환산")
     public String calculatedScore;
-    @ExcelColumn
-    public List<RightDto> rightFlagList;
-
-    @Data
-    @AllArgsConstructor
-    public static class RightDto {
-        @ExcelColumn(headerName = "test")
-        public Long questionSeqNo;
-        public Boolean rightFlag;
-    }
+    @ExcelColumn(headerName = "문항별 정오")
+    public List<String> rightFlagList;
 }

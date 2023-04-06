@@ -13,10 +13,12 @@ import java.util.Map;
 import static com.example.excel.excel.util.SuperClassReflectionUtils.getAllFields;
 import static com.example.excel.excel.util.SuperClassReflectionUtils.getAnnotation;
 
-public final class ExcelRenderResourceFactory {
+public class ExcelRenderResourceFactory {
 
-    public static ExcelRenderResource prepareRenderResource(Class<?> type, Workbook wb,
-                                                            DataFormatDecider dataFormatDecider) {
+
+
+    public static <T> ExcelRenderResource prepareRenderResource(Class<?> type, Workbook wb,
+                                                            DataFormatDecider dataFormatDecider, List<T> data) {
         PreCalculatedCellStyleMap styleMap = new PreCalculatedCellStyleMap(dataFormatDecider);
         Map<String, String> headerNamesMap = new LinkedHashMap<>();
         List<String> fieldNames = new ArrayList<>();
@@ -37,10 +39,22 @@ public final class ExcelRenderResourceFactory {
                         ExcelCellKey.of(field.getName(), ExcelRenderLocation.BODY),
                         getCellStyle(decideAppliedStyleAnnotation(classDefinedBodyStyle, annotation.bodyStyle())), wb);
                 fieldNames.add(field.getName());
-                headerNamesMap.put(field.getName(), annotation.headerName());
-            } else if (field.getType().equals(List.class)) {
-                String name = field.getName();
-                System.out.println("name = " + name);
+                if (field.getType().equals(List.class)) {
+                    int size = 0;
+                    try {
+                        size = ((List<?>) field.get(data.get(0))).size();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                    for (int i = 0; i < size; i++) {
+                        headerNamesMap.put(field.getName() + "." + i, Integer.toString(i + 1));
+                    }
+                } else {
+                    // Otherwise, add the header name as specified in the @ExcelColumn annotation
+                    headerNamesMap.put(field.getName(), annotation.headerName());
+                }
+//                headerNamesMap.put(field.getName(), annotation.headerName());
             }
         }
 
